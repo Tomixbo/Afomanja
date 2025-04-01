@@ -1,0 +1,88 @@
+.Midsection-container{
+    display: flex;
+    justify-content: center;
+    margin-top: 15vh;
+
+}
+.circle-bg-container {
+    min-height: 140vh;
+    display: flex;
+    align-items: center;
+    margin-top: 15vh;
+    margin-bottom: 40vh;
+}
+
+.circle-bg {
+    height: 25vw;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    border: 1px solid #979797;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.circle-bg .WayOptiLogo {
+    width: 40%;
+    aspect-ratio: 1/1;
+}
+
+.photo-1, .photo-2, .photo-3, .photo-4 {
+    position: absolute;
+}
+
+.photo-1 {
+    top: -75%;
+    left: -83%;
+    width: 27vw;
+    height: auto;
+}
+.photo-2 {
+    width: 17vw;
+    bottom: -57%;
+    left: -50%;
+    height: auto;
+}
+.photo-3 {
+    width: 17vw;
+    top: -57%;
+    right: -60%;
+    height: auto;
+}
+.photo-4 {
+    bottom: -80%;
+    right: -93%;
+    width: 27vw;
+    height: auto;
+}
+.TitleFirst{
+    width: 48%;
+    text-align: center;
+    /* font-size: ; */
+    font-family: "Self Modern", serif;
+    font-weight: 400;
+    line-height: 1.4;
+    letter-spacing: normal;
+    margin: auto;
+    margin-top: 15%;
+    font-size: xx-large
+  }
+  .TitleFirst-Logo {
+    display: flex;
+    justify-content: center;
+    font-size: xx-large
+  }
+
+  .TitleFirst-Logo .logo{
+    font-size: calc(2vw + 7px);
+    margin-top: 5px;
+    color: #80959a;
+  }
+
+  .TitleFirst-Logo .logo2 {
+    font-size: calc(2vw + 15px);
+    margin-top: 5px;
+    color: #00222a;
+  }
+  
