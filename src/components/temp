@@ -1,0 +1,373 @@
+import React, { useState, useEffect } from "react";
+import ChatWindow from "./ChatWindow";
+import MessageInput from "./MessageInput";
+
+const capitalizeFirstLetter = (str) => {
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+};
+
+const ChatApp = () => {
+  const [messages, setMessages] = useState([]);
+  const [ws, setWs] = useState(null);
+  const [currentUser, setCurrentUser] = useState("Anonymous");
+  const [currentUserType, setCurrentUserType] = useState("membre"); // Add userType state
+  const [membreName, setMembreName] = useState(""); // State for member's name
+  const [memberStatus, setMemberStatus] = useState("disconnected"); // State for member's status
+  const [connectedDoctors, setConnectedDoctors] = useState([]); // State for doctors
+  const [isAssistantAvailable, setIsAssistantAvailable] = useState(false); // AI assistant availability
+  const [membreId, setMembreId] = useState(null); // State for memberId
+  const [showCallModal, setShowCallModal] = useState(false);
+  const [callingDoctor, setCallingDoctor] = useState(null);
+
+  // Détermine si l'input et le bouton d'envoi doivent être activés
+  const isInputEnabled =
+    (memberStatus === "active" || memberStatus === "inactive") &&
+    (connectedDoctors.length > 0 || isAssistantAvailable);
+
+  // Heartbeat interval to keep the connection alive
+  const heartbeatInterval = 5000; // 5 seconds
+
+  // Show Modal on Incoming Call
+  const handleIncomingCall = (doctor) => {
+    setCallingDoctor(doctor);
+    setShowCallModal(true);
+  };
+
+  // Retrieve username and memberId from window object (global variables set by Django)
+  useEffect(() => {
+    const username = window.currentUser || "Anonymous"; // Ensure window.currentUser is used
+    const userType = window.userType || "membre"; // Retrieve userType from a global variable
+    const memberId = window.memberId || null; // Retrieve window.memberId for the chat room
+
+    setCurrentUser(username);
+    setCurrentUserType(userType);
+    setMembreId(memberId);
+  }, []);
+
+  // WebSocket connection setup
+  // WebSocket connection setup
+  useEffect(() => {
+    if (membreId) {
+      const protocol = window.location.protocol === "https:" ? "wss" : "ws";
+      const websocket = new WebSocket(
+        `${protocol}://${window.location.host}/ws/chat/${membreId}/`
+      );
+      setWs(websocket);
+
+      websocket.onopen = () => {
+        console.log("WebSocket connected to room", membreId);
+
+        // Start sending heartbeat messages
+        const heartbeat = setInterval(() => {
+          if (websocket.readyState === WebSocket.OPEN) {
+            websocket.send(
+              JSON.stringify({ type: "heartbeat", user: currentUser })
+            );
+          }
+        }, heartbeatInterval);
+
+        // Clear the interval when WebSocket closes
+        websocket.onclose = () => {
+          clearInterval(heartbeat);
+          console.log("WebSocket disconnected from room", membreId);
+        };
+      };
+
+      websocket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+
+        console.log("Received data from WebSocket: ", data);
+
+        if (data.type === "chat_history") {
+          const history = data.messages.map((msg) => ({
+            id: msg.message_id, // Ensure the ID is present
+            text: msg.message,
+            sender: msg.sender,
+            timestamp: msg.timestamp,
+            seen: msg.seen,
+          }));
+          setMessages(history); // Load chat history
+        } else if (data.type === "room_info") {
+          setMembreName(data.membre_name);
+          setConnectedDoctors(data.doctors_in_room); // Load initial list of doctors from the server
+          setMemberStatus(data.member_status.status); // Set initial member status
+        } else if (data.type === "doctor_joined") {
+          setConnectedDoctors((prevDoctors) => {
+            if (
+              !prevDoctors.some((doctor) => doctor.name === data.doctor_name)
+            ) {
+              return [
+                ...prevDoctors,
+                { name: data.doctor_name, status: "active" },
+              ];
+            }
+            return prevDoctors; // Do nothing if doctor already exists
+          });
+        } else if (data.type === "doctor_left") {
+          setConnectedDoctors((prevDoctors) =>
+            prevDoctors.filter((doctor) => doctor.name !== data.doctor_name)
+          );
+        } else if (data.type === "doctor_active") {
+          setConnectedDoctors((prevDoctors) =>
+            prevDoctors.map((doctor) =>
+              doctor.name === data.doctor_name
+                ? { ...doctor, status: "active" }
+                : doctor
+            )
+          );
+        } else if (data.type === "doctor_inactive") {
+          setConnectedDoctors((prevDoctors) =>
+            prevDoctors.map((doctor) =>
+              doctor.name === data.doctor_name
+                ? { ...doctor, status: "inactive" }
+                : doctor
+            )
+          );
+        } else if (data.type === "member_active") {
+          setMemberStatus("active");
+        } else if (data.type === "member_inactive") {
+          setMemberStatus("inactive");
+        } else if (data.type === "member_disconnected") {
+          setMemberStatus("disconnected");
+        } else if (data.type === "message_seen") {
+          // Update the message status to "seen"
+          setMessages((prevMessages) =>
+            prevMessages.map((msg) =>
+              msg.id === data.message_id ? { ...msg, seen: data.seen } : msg
+            )
+          );
+        }
+        // Handle streamed AI response
+        else if (data.type === "chat_message_stream") {
+          handleStreamUpdate(data.message);
+        } else if (data.message && data.sender && data.timestamp) {
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            {
+              id: data.message_id, // Ensure each message has a unique ID
+              text: data.message,
+              sender: data.sender,
+              timestamp: data.timestamp,
+              seen: data.seen, // Add the seen/unseen status
+            },
+          ]);
+        } else if (data.type === "incoming_call") {
+          handleIncomingCall(data.doctor);
+        }
+      };
+
+      // Function to handle stream updates (for AI responses)
+      const handleStreamUpdate = (newChunk) => {
+        setMessages((prevMessages) => {
+          const lastMessage = prevMessages[prevMessages.length - 1];
+
+          // If last message is from AI, append the new chunk
+          if (lastMessage && lastMessage.sender === "Bot01") {
+            const updatedMessage = {
+              ...lastMessage,
+              text: lastMessage.text + newChunk, // Append chunk
+            };
+
+            return [...prevMessages.slice(0, -1), updatedMessage];
+          } else {
+            // If no AI message yet, create one
+            return [
+              ...prevMessages,
+              { sender: "Bot01", text: newChunk, timestamp: new Date() },
+            ];
+          }
+        });
+      };
+
+      // Handle visibility change events
+      const handleVisibilityChange = () => {
+        if (document.visibilityState === "hidden") {
+          websocket.send(JSON.stringify({ type: "inactive" }));
+        } else {
+          websocket.send(JSON.stringify({ type: "active" }));
+        }
+      };
+
+      document.addEventListener("visibilitychange", handleVisibilityChange);
+
+      return () => {
+        websocket.close(); // Clean up WebSocket connection when component unmounts
+        document.removeEventListener(
+          "visibilitychange",
+          handleVisibilityChange
+        );
+      };
+    }
+  }, [membreId]);
+
+  // Function to check AI availability
+  const checkAIAvailability = async () => {
+    try {
+      const response = await fetch("/check-ai-availability/");
+      const data = await response.json();
+      setIsAssistantAvailable(data.available);
+    } catch (error) {
+      console.error("Error checking AI availability:", error);
+      setIsAssistantAvailable(false); // Set false in case of error
+    }
+  };
+
+  useEffect(() => {
+    // Check AI availability on component load
+    checkAIAvailability();
+  }, []);
+
+  // Handle sending messages
+  const handleSendMessage = (newMessage) => {
+    if (newMessage.trim()) {
+      const message = {
+        message: newMessage,
+        sender: currentUser, // Use currentUser for the sender
+        timestamp: new Date().toISOString(),
+      };
+
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify(message)); // Send message via WebSocket
+      }
+    }
+  };
+
+  return (
+    <div className="flex h-full w-full ">
+
+      Sidebar
+      <div className="w-2/6 px-4 py-6  text-white bg-gray-700 flex flex-col">
+        {/* Room name */}
+        <div className="py-4">
+          <h2 className="text-lg font-semibold">
+            Salon de consultation pour : {capitalizeFirstLetter(membreName)}
+          </h2>
+          <p className="text-sm">
+            Statut du membre :{" "}
+            <span
+              className={
+                memberStatus === "active"
+                  ? "text-green-500"
+                  : memberStatus === "inactive"
+                  ? "text-yellow-500"
+                  : "text-red-500"
+              }
+            >
+              {memberStatus === "active" ? "Actif" : "Inactif"}
+            </span>
+          </p>
+        </div>
+        {/* Connected doctors */}
+        <div className="border-t py-4">
+          <h3 className="font-semibold mb-2">Médecins</h3>
+          {connectedDoctors.length > 0 ? (
+            <ul>
+              {connectedDoctors.map((doctor, index) => (
+                <li
+                  key={index}
+                  className={
+                    doctor.name === currentUser
+                      ? "font-bold text-blue-500"
+                      : doctor.status === "inactive"
+                      ? "text-gray-500" // Show inactive doctors in gray
+                      : ""
+                  }
+                >
+                  {capitalizeFirstLetter(doctor.name)} (
+                  {doctor.status === "inactive" ? "Inactif" : "Actif"})
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-gray-400">Aucun médecin connecté</p>
+          )}
+        </div>
+        {/* AI Assistant Status */}
+        <div className="border-t py-4">
+          <h3 className="font-semibold mb-2">Assistant IA</h3>
+          {isAssistantAvailable ? (
+            <p className="text-green-500">Bot01 (Disponible)</p>
+          ) : (
+            <p className="text-gray-400">Aucun assistant IA disponible</p>
+          )}
+        </div>
+
+        {/* Call button */}
+        {currentUserType === "medecin" && (
+          <div className="mt-auto border-t pt-4">
+            <button
+              className={`w-full py-2 text-white rounded-lg ${
+                memberStatus === "disconnected"
+                  ? "bg-gray-500 cursor-not-allowed"
+                  : "bg-blue-500 hover:bg-blue-600 cursor-pointer"
+              }`}
+              disabled={memberStatus === "disconnected"}
+              onClick={() => {
+                // In the doctor's call button click event
+                ws.send(
+                  JSON.stringify({
+                    type: "call_initiated",
+                    doctor: currentUser, // Send the doctor's name or ID
+                    room_id: membreId, // Send the room ID or member ID
+                  })
+                );
+                // Open the video call in a new window with specific dimensions
+                window.open(
+                  `/video-call/${membreId}?initiator=true`,
+                  "_blank",
+                  "width=800,height=600"
+                );
+              }}
+            >
+              Lancer un appel
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Main Chat Section */}
+      <div className="flex-grow flex flex-col p-4 bg-gray-200">
+        {/* Chat Window */}
+        <ChatWindow messages={messages} currentUser={currentUser} />
+        {/* Message Input */}
+        <MessageInput
+          onSendMessage={handleSendMessage}
+          isInputEnabled={isInputEnabled}
+        />
+      </div>
+
+      {/* Show Call Modal */}
+      {showCallModal && callingDoctor !== currentUser && (
+        <div className="modal fixed inset-0 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h2>{callingDoctor} is calling...</h2>
+            <div className="flex justify-between mt-4">
+              <button
+                className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded"
+                onClick={() => {
+                  // Handle accepting the call (e.g., open video call window)
+                  window.open(
+                    `/video-call/${membreId}`,
+                    "_blank",
+                    "width=800,height=600"
+                  );
+                  setShowCallModal(false); // Close the modal
+                }}
+              >
+                Accept
+              </button>
+              <button
+                className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
+                onClick={() => setShowCallModal(false)}
+              >
+                Reject
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default ChatApp;
