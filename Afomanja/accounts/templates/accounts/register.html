@@ -34,6 +34,17 @@
                 {% endif %}
             </div>
 
+            <!-- Champ Role -->
+            <div class="mb-4">
+                <label for="id_role" class="block text-sm font-medium text-gray-700">Rôle</label>
+                <select name="role" id="id_role" required
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500">
+                    <option value="">-- Choisissez un rôle --</option>
+                    <option value="client">Client</option>
+                    <option value="fournisseur">Fournisseur</option>
+                </select>
+            </div>
+            
             <!-- Champ Mot de passe -->
             <div class="mb-4">
                 <label for="id_password1" class="block text-sm font-medium text-gray-700">Mot de passe</label>
@@ -53,9 +64,6 @@
                     <p class="text-red-500 text-sm">{{ form.password2.errors }}</p>
                 {% endif %}
             </div>
-
-            <!-- Champ Role (caché) -->
-            {{ form.role }}
 
             <!-- Bouton d'inscription -->
             <button type="submit" class="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">
