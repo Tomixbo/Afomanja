@@ -1,6 +1,3 @@
-
-
-# Create your views here.
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model, authenticate, login as auth_login, logout
 from django.contrib import messages
@@ -29,7 +26,7 @@ def login(request):
                 else:
                     return redirect('tableau_de_bord_client')
             except Profile.DoesNotExist:
-                return redirect('accueil')
+                return redirect('home')
         else:
             messages.error(request, 'Email ou mot de passe incorrect.')
     return render(request, 'accounts/login.html')
@@ -65,6 +62,4 @@ def log_out(request):
 def home(request):
     return render(request, 'home.html')
 
-def client_dashboard(request):
-    # Votre logique pour le tableau de bord client
-    return render(request, 'accounts/client_dashboard.html')
+
