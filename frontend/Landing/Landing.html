@@ -3,11 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="../assets/Icon/energie-renouvelable.png">
+    <link rel="icon" type="image/x-icon" href="../assets/Icon/favicon.png">
     <link rel="stylesheet" href="Landing.css">
+    <link rel="stylesheet" href="../locomotive/locomotive-scroll.css">
     <title>Afomanja | frontend</title>
 </head> 
-<body>
-    Bonjour
+<body data-scroll-container>
+
+    <section class="herotop " data-scroll-section>
+
+        <div class="main-container-hero-top" data-scroll data-scroll-speed="1">
+            <div class="left-section-hero">
+                
+            </div>
+
+            <div class="right-section-hero">
+                <video autoplay loop muted>
+                    <source src="../assets/video/17955817-hd_720_1280_30fps.mp4" type="video/mp4" />
+                </video>
+            </div>
+        </div>
+
+        <div class="img-hors-main-container" data-scroll data-scroll-speed="4">
+            <div class="baseImage">
+                <img src="../assets/img/recyclage_baseimg.jpg" alt="">
+            </div>
+        </div>
+
+    </section>
+
+    <section class="illustration" data-scroll-section>
+
+    </section>
+
+
+    <script src="../locomotive/locomotive-scroll.min.js"></script>
+    <script src="./Landing.js"></script>
 </body>
 </html>
