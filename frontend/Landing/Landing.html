@@ -1,13 +1,128 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="../assets/Icon/energie-renouvelable.png">
     <link rel="stylesheet" href="Landing.css">
     <title>Afomanja | frontend</title>
-</head> 
+
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+
+</head>
+
 <body>
-    Bonjour
+    <div
+        class=" w-full max-w-3xl fixed rounded-full left-1/2 transform -translate-x-1/2  max-h-[45px] h-full   my-[12px]  bg-white ">
+        <nav class="flex items-center px-[12px] py-[7px]">
+            <div class="flex flex-1 ">
+                <a href="#" class="-m-1.5 p-1.5">
+                    <span class="sr-only">Your Company</span>
+                    <img class="h-8 w-auto"
+                        src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=600" alt="">
+                </a>
+            </div>
+            <div class="flex gap-x-12 items-center justify-center space-x-6 hidden md:flex">
+                <a href="#" class="text-sm font-semibold text-gray-900">Product</a>
+                <a href="#" class="text-sm font-semibold text-gray-900">Features</a>
+                <a href="#" class="text-sm font-semibold text-gray-900">Marketplace</a>
+                <a href="#" class="text-sm font-semibold text-gray-900">Company</a>
+            </div>
+
+            <div class="flex flex-1 justify-end">
+                <a href="#"
+                    class="text-sm font-semibold text-gray-900 bg-blue-500 px-[12px] py-[5px] text-white rounded-full">Log
+                    in <span aria-hidden="true">&rarr;</span></a>
+            </div>
+        </nav>
+    </div>
+
+    <div class="fixed bottom-0 right-0 mb-9 mr-9">
+        <a href="#"
+            class="text-sm font-semibold text-gray-900 bg-blue-500 px-[22px] py-[10px] text-white rounded-lg">Pakafako</a>
+    </div>
+
+    <div class="mx-[12px] ">
+        <div
+            class="bg-[url('https://www.actulus.net/background.webp')]  mt-[12px] rounded-3xl bg-cover bg-center h-[100vh]">
+
+        </div>
+
+        <div class="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8">
+            <div class="h-[57vh] rounded ">
+                <blockquote class="relative p-4">
+                    <span class="icon-[tabler--quote] text-base-300/20 absolute -start-3 -top-3 size-16 rotate-180 rtl:rotate-0"></span>
+                  
+                    <div class="relative z-1">
+                      <p class="text-base-content text-lg">
+                        <em>
+                          The blockquote element is ideal for showcasing well-known quotes within content. It's commonly used for
+                          testimonials, reviews, and notable quotes in articles.
+                        </em>
+                      </p>
+                    </div>
+                    <footer class="mt-[35%] flex items-center">
+                      <div class="avatar">
+                        <div class="size-10 rounded-full">
+                          <img src="https://cdn.flyonui.com/fy-assets/avatar/avatar-1.png" alt="avatar" />
+                        </div>
+                      </div>
+                      <div class="ms-4">
+                        <div class="text-base-content text-base font-semibold">Shamus Tuttle</div>
+                        <div class="text-base-content/50 text-xs">Source title</div>
+                      </div>
+                    </footer>
+                  </blockquote>
+                
+            </div>
+            <div class="h-[57vh]  ">
+                <a href="#" class="group relative block h-64 sm:h-80 lg:h-96">
+                    <span class="absolute inset-0 border-2 border-dashed border-black"></span>
+                  
+                    <div
+                      class="relative flex h-full transform items-end border-2 border-black bg-white transition-transform group-hover:-translate-x-2 group-hover:-translate-y-2"
+                    >
+                      <div
+                        class="p-4 !pt-0 transition-opacity group-hover:absolute group-hover:opacity-0 sm:p-6 lg:p-8"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="size-10 sm:size-12"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                  
+                        <h2 class="mt-4 text-xl font-medium sm:text-2xl">Go around the world</h2>
+                      </div>
+                  
+                      <div
+                        class="absolute p-4 opacity-0 transition-opacity group-hover:relative group-hover:opacity-100 sm:p-6 lg:p-8"
+                      >
+                        <h3 class="mt-4 text-xl font-medium sm:text-2xl">Go around the world</h3>
+                  
+                        <p class="mt-4 text-sm sm:text-base">
+                          Lorem ipsum dolor sit amet consectetur adipisicing elit. Cupiditate, praesentium voluptatem
+                          omnis atque culpa repellendus.
+                        </p>
+                  
+                        <p class="mt-8 font-bold">Read more</p>
+                      </div>
+                    </div>
+                  </a>
+            </div>
+        </div>
+    </div>
+
 </body>
+
 </html>
