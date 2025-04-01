@@ -1,8 +1,7 @@
-<nav>
-    <ul>
-      <li><a href="{% url 'gestion_digestion' %}">Gestion Digestion</a></li>
-      <li><a href="{% url 'marketplace' %}">Marketplace</a></li>
-      <!-- Ajoutez ici d'autres liens si nécessaire -->
-    </ul>
-  </nav>
-  
+{% extends "customer_space/base_customer.html" %}
+
+{% block title %}Titre de la page enfant{% endblock %}
+
+{% block content %}
+<p>Ceci est la page client.</p>
+{% endblock %}
