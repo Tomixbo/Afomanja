@@ -1,0 +1,24 @@
+{% load static tailwind_tags %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Espace Client{% endblock %}</title>
+    {% tailwind_css %}
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="{% url 'order' %}">Commander</a></li>
+            <li><a href="{% url 'marketplace_supplier' %}">Marketplace</a></li>
+            <li><a href="{% url 'logout' %}">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        {% block content %}
+        
+        {% endblock %}
+    </div>
+</body>
+</html>

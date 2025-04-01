@@ -6,7 +6,6 @@ def client_dashboard(request):
     return render(request, 'customer_space/client_home.html')
 
 
-from django.shortcuts import render
 
 def gestion_digestion(request):
     # Logique spécifique à la page de gestion de digestion
