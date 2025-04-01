@@ -1,0 +1,53 @@
+body {
+    margin: 0;
+}
+.herotop {
+    height: 100vh;
+    position: relative;
+}
+.main-container-hero-top {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Deux colonnes égales */
+}
+
+
+.left-section-hero {
+
+}
+
+.right-section-hero {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    overflow: hidden;
+}
+.right-section-hero video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Remplit le conteneur en gardant une bonne proportion */
+}
+
+.illustration {
+    height: 100vh;
+}
+
+.img-hors-main-container {
+    position: absolute;   
+    bottom: -27%;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+.baseImage {
+    width: 20vw;
+}
+
+.baseImage img{
+    width: 20vw;
+    height: auto;
+}
+ 
