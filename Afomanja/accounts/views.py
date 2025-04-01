@@ -68,4 +68,4 @@ def log_out(request):
     return redirect('login')  # Redirige vers la page de connexion après le logout
 
 def home(request):
-    return render(request, 'base.html') 
+    return render(request, 'home.html') 

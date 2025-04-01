@@ -9,11 +9,21 @@
 		{% tailwind_css %}
 	</head>
 
-	<body class="bg-gray-50 font-serif leading-normal tracking-normal">
-		<div class="container mx-auto">
-			<section class="flex items-center justify-center h-screen">
-				<h1 class="text-5xl">Django + Tailwind = ❤️</h1>
-			</section>
-		</div>
+	<body class="">
+		    <!-- En-tête -->
+			<header class="bg-green-600 text-white py-4">
+				<div class="container mx-auto px-4">
+					<h1 class="text-3xl font-bold">Bienvenue sur notre site</h1>
+					<nav class="mt-2">
+						<a href="{% url 'home' %}" class="text-white hover:text-gray-200 mr-4">Accueil</a>
+						<a href="{% url 'home' %}" class="text-white hover:text-gray-200 mr-4">Services</a>
+						<a href="{% url 'home' %}" class="text-white hover:text-gray-200">Se connecter</a>
+					</nav>
+				</div>
+			</header>
+			<div> 
+				{% block content %}
+				{% endblock %}
+			</div>
 	</body>
 </html>
